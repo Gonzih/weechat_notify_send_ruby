@@ -60,7 +60,10 @@ def notify_show(data,
                 prefix,
                 message)
 
-  if Weechat.buffer_get_string(bufferp, "localvar_type") == "private" || ishilight == 1.to_s
+  server = Weechat.buffer_get_string(bufferp, "localvar_name").split('.')[0]
+  nick = Weechat.info_get 'irc_nick', server
+
+  if (Weechat.buffer_get_string(bufferp, "localvar_type") == "private" && prefix != nick) || ishilight == 1.to_s
     `notify-send "#{prefix}" "#{message}" -t 2 -i ~/.weechat/message.png&`
   end
 
