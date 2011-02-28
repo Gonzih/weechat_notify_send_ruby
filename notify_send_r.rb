@@ -1,4 +1,4 @@
-# Copyright (c) 2011, Max Soltan <gonzih@gmial.com>
+# Copyright (c) 2011, Max Soltan <gonzih@gmail.com>
 # All rights reserved.
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,7 +28,7 @@ require 'net/https'
 require 'uri'
 
 SCRIPT_NAME = 'notify_send_r'
-SCRIPT_AUTHOR = 'Max Soltan <gonzih@gmial.com>'
+SCRIPT_AUTHOR = 'Max Soltan <gonzih@gmail.com>'
 SCRIPT_DESC = 'Notifications'
 SCRIPT_VERSION = '1.8'
 SCRIPT_LICENSE = 'MIT'
@@ -60,14 +60,8 @@ def notify_show(data,
                 prefix,
                 message)
 
-  server = Weechat.buffer_get_string(bufferp, "localvar_name").split('.')[0]
-  nick = Weechat.info_get 'irc_nick', server
-  if prefix != nick && prefix !~ /#{nick}/
-    if Weechat.buffer_get_string(bufferp, "localvar_type") == "private"
-      `notify-send "#{prefix}" "#{message}" -t 2 -i ~/.weechat/message.png&`
-    else
-      `notify-send "#{prefix}" "#{message}" -t 2 -i ~/.weechat/message.png&` if message.downcase =~ /#{nick.downcase}/
-    end
+  if Weechat.buffer_get_string(bufferp, "localvar_type") == "private" || ishilight == 1.to_s
+    `notify-send "#{prefix}" "#{message}" -t 2 -i ~/.weechat/message.png&`
   end
 
   Weechat::WEECHAT_RC_OK
