@@ -26,22 +26,15 @@
 require 'net/http'
 require 'net/https'
 require 'uri'
+require 'time'
 
 SCRIPT_NAME = 'notify_send_r'
 SCRIPT_AUTHOR = 'Max Soltan <gonzih@gmail.com>'
 SCRIPT_DESC = 'Notifications'
 SCRIPT_VERSION = '1.8'
 SCRIPT_LICENSE = 'MIT'
-
-DEFAULTS = {
-  'maxlen'      => '50',
-  'color'       => 'red',
-  'shortener'   => 'tinyurl',
-  'bitly_login' => '',
-  'bitly_key'   => '',
-  'yourls_url' => '',
-}
-
+DELAY = 12
+TIME_FILE_PATH = '/tmp/weechat_notify_last_time'
 
 def weechat_init
   Weechat.register SCRIPT_NAME, SCRIPT_AUTHOR, SCRIPT_VERSION, SCRIPT_LICENSE, SCRIPT_DESC, "", ""
@@ -63,9 +56,27 @@ def notify_show(data,
   server = Weechat.buffer_get_string(bufferp, "localvar_name").split('.')[0]
   nick = Weechat.info_get 'irc_nick', server
 
-  if (Weechat.buffer_get_string(bufferp, "localvar_type") == "private" && prefix != nick) || ishilight == 1.to_s
-    `notify-send "#{prefix}" "#{message}" -t 2 -i ~/.weechat/message.png&`
+  if (Weechat.buffer_get_string(bufferp, "localvar_type") == "private" || ishilight == 1.to_s) && prefix != nick
+    if delay_ok?
+      `notify-send "#{prefix}" "#{message}" -t #{DELAY} -i ~/.weechat/message.png&`
+      touch_delay
+    end
   end
 
   Weechat::WEECHAT_RC_OK
+end
+
+
+def touch_delay
+  temp_time = File.open(TIME_FILE_PATH, 'w')
+  temp_time.puts Time.now.to_s
+  temp_time.close
+end
+
+def delay_ok?
+  if File.exist?(TIME_FILE_PATH) && File.file?(TIME_FILE_PATH)
+    (Time.now - Time.parse(File.open(TIME_FILE_PATH).read)) > DELAY
+  else
+    true
+  end
 end
