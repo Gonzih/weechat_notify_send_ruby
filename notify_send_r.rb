@@ -60,9 +60,14 @@ def notify_show(data,
                 prefix,
                 message)
 
-  if Weechat.buffer_get_string(bufferp, "localvar_type") == "private"
-    `notify-send "#{prefix}" "#{message}" -t 2 -i ~/.weechat/message.png&`
-  else
+  server = Weechat.buffer_get_string(bufferp, "localvar_name").split('.')[0]
+  nick = Weechat.info_get 'irc_nick', server
+  if prefix != nick && prefix !~ /#{nick}/
+    if Weechat.buffer_get_string(bufferp, "localvar_type") == "private"
+      `notify-send "#{prefix}" "#{message}" -t 2 -i ~/.weechat/message.png&`
+    else
+      `notify-send "#{prefix}" "#{message}" -t 2 -i ~/.weechat/message.png&` if message.downcase =~ /#{nick.downcase}/
+    end
   end
 
   Weechat::WEECHAT_RC_OK
