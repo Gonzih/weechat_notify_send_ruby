@@ -18,6 +18,10 @@
 #LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
+#
+#very simple script that send messages,
+#put message.png to ~/.weechat folder,
+#that will be use as icon on notifications
 
 require 'net/http'
 require 'net/https'
@@ -41,7 +45,6 @@ DEFAULTS = {
 
 def weechat_init
   Weechat.register SCRIPT_NAME, SCRIPT_AUTHOR, SCRIPT_VERSION, SCRIPT_LICENSE, SCRIPT_DESC, "", ""
-  #weechat.hook_print("", "irc_privmsg", "", 1, "notify_show", "")
   Weechat.hook_print('', 'irc_privmsg', '', 1, 'notify_show', '')
 
   Weechat::WEECHAT_RC_OK
